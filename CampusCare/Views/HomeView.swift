@@ -3,12 +3,12 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var service = AnalysisService.shared
     @State private var currentInsight = ""
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    
+
                     // MARK: - Greeting（动态根据时间变化）
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
@@ -25,18 +25,18 @@ struct HomeView: View {
                             .foregroundColor(.blue)
                     }
                     .padding(.horizontal)
-                    
+
                     // MARK: - Health Score Card（动态分数）
                     VStack(spacing: 8) {
                         Text("Health Score")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                        
+
                         let score = service.calculateScore()
                         Text("\(score)")
                             .font(.system(size: 72, weight: .bold))
                             .foregroundColor(score >= 80 ? .blue : score >= 60 ? .orange : .red)
-                        
+
                         HStack(spacing: 4) {
                             let stars = score / 20
                             ForEach(0..<5) { index in
@@ -45,7 +45,7 @@ struct HomeView: View {
                             }
                         }
                         .font(.title3)
-                        
+
                         // 动态评语
                         Text(getScoreComment(score: score))
                             .font(.caption)
@@ -57,7 +57,7 @@ struct HomeView: View {
                     .cornerRadius(20)
                     .shadow(color: Color.black.opacity(0.05), radius: 10)
                     .padding(.horizontal)
-                    
+
                     // MARK: - Quick Stats（动态数据）- 使用 Components/StatCard.swift
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 14) {
@@ -68,7 +68,7 @@ struct HomeView: View {
                         }
                         .padding(.horizontal)
                     }
-                    
+
                     // MARK: - AI Insight Card（动态根据数据生成）
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -92,19 +92,19 @@ struct HomeView: View {
                             .stroke(Color.green.opacity(0.3), lineWidth: 1)
                     )
                     .padding(.horizontal)
-                    
+
                     // MARK: - Today's Goals（动态进度）
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Today's Goals")
                             .font(.headline)
-                        
+
                         GoalProgress(
                             title: "Drink 8 cups of water",
                             current: service.water,
                             total: 8,
                             emoji: "💧"
                         )
-                        
+
                         GoalProgress(
                             title: "Walk 8000 steps",
                             current: service.steps,
@@ -175,7 +175,7 @@ struct HomeView: View {
             }
         }
     }
-    
+
     // MARK: - 动态生成问候语
     private func getGreeting() -> String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -183,7 +183,7 @@ struct HomeView: View {
         else if hour < 17 { return "Good Afternoon 🌤️" }
         else { return "Good Evening 🌙" }
     }
-    
+
     // MARK: - 动态生成分数评语
     private func getScoreComment(score: Int) -> String {
         if score >= 85 { return "🌟 Excellent! Keep it up!" }
@@ -191,11 +191,11 @@ struct HomeView: View {
         else if score >= 55 { return "📈 Keep going! You're making progress" }
         else { return "💪 Let's focus on your health today" }
     }
-    
+
     // MARK: - 动态生成AI洞察（根据实际数据）
     private func generateDynamicInsight() -> String {
         var insights: [String] = []
-        
+
         // 睡眠洞察
         if service.sleep < 6 {
             insights.append("😴 You only slept \(String(format: "%.1f", service.sleep)) hours. Try to sleep earlier tonight.")
@@ -204,36 +204,36 @@ struct HomeView: View {
         } else if service.sleep >= 7 {
             insights.append("😊 Good sleep quality. Keep it up!")
         }
-        
+
         // 学习洞察
         if service.study > 6 {
             insights.append("📚 You studied \(String(format: "%.1f", service.study)) hours. Remember to take breaks.")
         } else if service.study < 3 && service.study > 0 {
             insights.append("📖 Try to study a bit more today. Aim for 3-4 hours.")
         }
-        
+
         // 饮水洞察
         if service.water < 4 {
             insights.append("💧 You've only had \(service.water) cups of water. Drink more!")
         } else if service.water >= 8 {
             insights.append("💧 Great hydration! \(service.water) cups is perfect.")
         }
-        
+
         // 运动洞察
         if service.steps < 5000 {
             insights.append("🚶 Walk more today! You've taken \(service.steps) steps so far.")
         } else if service.steps >= 10000 {
             insights.append("🏃 Amazing! You've reached \(service.steps) steps today!")
         }
-        
+
         // 如果没有数据，给出默认建议
         if insights.isEmpty {
             return "✨ You're doing great! Stay consistent with your healthy habits."
         }
-        
+
         return insights.joined(separator: " ")
     }
-    
+
     private func refreshInsight() {
         currentInsight = generateDynamicInsight()
     }
@@ -245,11 +245,11 @@ struct GoalProgress: View {
     let current: Int
     let total: Int
     let emoji: String
-    
+
     var progress: Double {
         Double(current) / Double(total)
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
@@ -260,14 +260,14 @@ struct GoalProgress: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            
+
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
                     Rectangle()
                         .fill(Color.gray.opacity(0.15))
                         .frame(height: 8)
                         .cornerRadius(4)
-                    
+
                     Rectangle()
                         .fill(
                             LinearGradient(

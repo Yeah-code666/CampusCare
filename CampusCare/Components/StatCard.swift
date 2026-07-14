@@ -4,7 +4,7 @@ struct StatCard: View {
     let icon: String
     let label: String
     let value: String
-    
+
     var body: some View {
         VStack(spacing: 6) {
             Text(icon)

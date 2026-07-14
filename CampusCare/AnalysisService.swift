@@ -15,7 +15,7 @@ struct Suggestion: Identifiable {
     let icon: String
     let text: String
     let priority: Priority
-    
+
     enum Priority: Int {
         case high = 0
         case medium = 1
@@ -35,7 +35,7 @@ class AnalysisService: ObservableObject {
     static let shared = AnalysisService()
 
     private let userDefaults: UserDefaults
-    
+
     @Published var sleep: Double = 7.2
     @Published var study: Double = 5.5
     @Published var water: Int = 5
@@ -43,12 +43,12 @@ class AnalysisService: ObservableObject {
     @Published var steps: Int = 6800
     @Published var stress: Int = 5
     @Published private(set) var dataVersion = 0
-    
+
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
         loadFromStorage()
     }
-    
+
     func loadFromStorage() {
         if userDefaults.object(forKey: "userSleep") != nil {
             sleep = userDefaults.double(forKey: "userSleep")
@@ -70,7 +70,7 @@ class AnalysisService: ObservableObject {
         }
         dataVersion += 1
     }
-    
+
     func updateData(sleep: Double? = nil, study: Double? = nil, steps: Int? = nil, water: Int? = nil, mood: String? = nil, stress: Int? = nil) {
         if let sleep = sleep {
             self.sleep = sleep
@@ -98,45 +98,45 @@ class AnalysisService: ObservableObject {
         }
         dataVersion += 1
     }
-    
+
     func calculateScore() -> Int {
         var score = 0
-        
+
         // 睡眠 (最高30分)
         if sleep >= 8 { score += 30 }
         else if sleep >= 7 { score += 25 }
         else if sleep >= 6 { score += 18 }
         else if sleep >= 5 { score += 10 }
         else { score += 5 }
-        
+
         // 学习 (最高20分)
         if study >= 4 && study <= 6 { score += 20 }
         else if study > 6 { score += 15 }
         else if study >= 3 { score += 12 }
         else { score += 5 }
-        
+
         // 运动 (最高20分)
         if steps >= 10000 { score += 20 }
         else if steps >= 8000 { score += 18 }
         else if steps >= 6000 { score += 14 }
         else if steps >= 4000 { score += 8 }
         else { score += 3 }
-        
+
         // 饮水 (最高15分)
         if water >= 8 { score += 15 }
         else if water >= 6 { score += 12 }
         else if water >= 4 { score += 8 }
         else { score += 3 }
-        
+
         // 压力 (最高15分)
         if stress <= 3 { score += 15 }
         else if stress <= 5 { score += 12 }
         else if stress <= 7 { score += 8 }
         else { score += 4 }
-        
+
         return min(score, 100)
     }
-    
+
     func getDimensionScore(_ type: String) -> Double {
         switch type {
         case "sleep":
@@ -171,10 +171,10 @@ class AnalysisService: ObservableObject {
             return 5.0
         }
     }
-    
+
     func getAnalysis() -> AnalysisResult {
         let score = calculateScore()
-        
+
         let dimensions = [
             DimensionScore(name: "Sleep", score: getDimensionScore("sleep"), icon: "🌙", color: .blue),
             DimensionScore(name: "Study", score: getDimensionScore("study"), icon: "📚", color: .purple),
@@ -182,9 +182,9 @@ class AnalysisService: ObservableObject {
             DimensionScore(name: "Diet", score: getDimensionScore("diet"), icon: "🍱", color: .orange),
             DimensionScore(name: "Stress", score: getDimensionScore("stress"), icon: "🧘", color: .pink)
         ]
-        
+
         let suggestions = getSuggestions()
-        
+
         return AnalysisResult(
             score: score,
             yesterdayScore: max(score - Int.random(in: 1...5), 50),
@@ -192,11 +192,11 @@ class AnalysisService: ObservableObject {
             suggestions: suggestions
         )
     }
-    
+
     // MARK: - 动态生成AI建议（完全根据数据）
     func getSuggestions() -> [Suggestion] {
         var suggestions: [Suggestion] = []
-        
+
         // 睡眠建议
         if sleep < 6 {
             suggestions.append(Suggestion(
@@ -217,7 +217,7 @@ class AnalysisService: ObservableObject {
                 priority: .low
             ))
         }
-        
+
         // 饮水建议
         if water < 4 {
             suggestions.append(Suggestion(
@@ -238,7 +238,7 @@ class AnalysisService: ObservableObject {
                 priority: .low
             ))
         }
-        
+
         // 运动建议
         if steps < 4000 {
             suggestions.append(Suggestion(
@@ -259,7 +259,7 @@ class AnalysisService: ObservableObject {
                 priority: .low
             ))
         }
-        
+
         // 学习建议
         if study > 6 {
             suggestions.append(Suggestion(
@@ -280,7 +280,7 @@ class AnalysisService: ObservableObject {
                 priority: .low
             ))
         }
-        
+
         // 压力建议
         if stress > 7 {
             suggestions.append(Suggestion(
@@ -295,7 +295,7 @@ class AnalysisService: ObservableObject {
                 priority: .medium
             ))
         }
-        
+
         // 如果没有任何建议（数据全是理想的），给出鼓励
         if suggestions.isEmpty {
             suggestions.append(Suggestion(
@@ -304,7 +304,7 @@ class AnalysisService: ObservableObject {
                 priority: .low
             ))
         }
-        
+
         // 按优先级排序（高优先级在前）
         return suggestions.sorted { $0.priority.rawValue < $1.priority.rawValue }
     }

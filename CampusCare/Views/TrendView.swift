@@ -17,7 +17,7 @@ enum TrendType: String, CaseIterable {
 struct TrendView: View {
     @State private var selectedTrend: TrendType = .sleep
     @StateObject private var service = AnalysisService.shared
-    
+
     // MARK: - Data
     let sleepData = [
         TrendData(day: "Mon", value: 7.0),
@@ -28,7 +28,7 @@ struct TrendView: View {
         TrendData(day: "Sat", value: 8.5),
         TrendData(day: "Sun", value: 7.8)
     ]
-    
+
     let studyData = [
         TrendData(day: "Mon", value: 5.0),
         TrendData(day: "Tue", value: 4.5),
@@ -38,7 +38,7 @@ struct TrendView: View {
         TrendData(day: "Sat", value: 3.0),
         TrendData(day: "Sun", value: 2.5)
     ]
-    
+
     let waterData = [
         TrendData(day: "Mon", value: 6.0),
         TrendData(day: "Tue", value: 5.0),
@@ -48,7 +48,7 @@ struct TrendView: View {
         TrendData(day: "Sat", value: 7.0),
         TrendData(day: "Sun", value: 8.0)
     ]
-    
+
     let stepsData = [
         TrendData(day: "Mon", value: 7500),
         TrendData(day: "Tue", value: 6800),
@@ -58,7 +58,7 @@ struct TrendView: View {
         TrendData(day: "Sat", value: 8500),
         TrendData(day: "Sun", value: 7800)
     ]
-    
+
     var currentData: [TrendData] {
         switch selectedTrend {
         case .sleep: return replacingLatestValue(in: sleepData, with: service.sleep)
@@ -72,7 +72,7 @@ struct TrendView: View {
         guard let latest = data.last else { return data }
         return Array(data.dropLast()) + [TrendData(day: latest.day, value: value)]
     }
-    
+
     var currentUnit: String {
         switch selectedTrend {
         case .sleep, .study: return "hours"
@@ -80,7 +80,7 @@ struct TrendView: View {
         case .steps: return "steps"
         }
     }
-    
+
     var currentColor: Color {
         switch selectedTrend {
         case .sleep: return .blue
@@ -89,7 +89,7 @@ struct TrendView: View {
         case .steps: return .green
         }
     }
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -101,7 +101,7 @@ struct TrendView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding()
-                
+
                 // MARK: - Chart
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
@@ -113,7 +113,7 @@ struct TrendView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     Chart(currentData) { item in
                         LineMark(
                             x: .value("Day", item.day),
@@ -121,7 +121,7 @@ struct TrendView: View {
                         )
                         .foregroundStyle(currentColor)
                         .interpolationMethod(.catmullRom)
-                        
+
                         PointMark(
                             x: .value("Day", item.day),
                             y: .value("Value", item.value)
@@ -140,7 +140,7 @@ struct TrendView: View {
                 .cornerRadius(20)
                 .shadow(color: Color.black.opacity(0.05), radius: 10)
                 .padding(.horizontal)
-                
+
                 // MARK: - Statistics
                 HStack(spacing: 16) {
                     TrendStatCard(
@@ -161,7 +161,7 @@ struct TrendView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 12)
-                
+
                 Spacer()
             }
             .background(Color(.systemGroupedBackground))
@@ -169,24 +169,24 @@ struct TrendView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-    
+
     // MARK: - Helper Functions
     private func averageValue() -> Double {
         let total = currentData.reduce(0) { $0 + $1.value }
         return total / Double(currentData.count)
     }
-    
+
     private func maxValue() -> Double {
         return currentData.map { $0.value }.max() ?? 0
     }
-    
+
     private func changeValue() -> Double {
         guard currentData.count >= 2 else { return 0 }
         let first = currentData.first?.value ?? 0
         let last = currentData.last?.value ?? 0
         return last - first
     }
-    
+
     private func trendDirection() -> String {
         let change = changeValue()
         if change > 0.5 { return "↑" }
@@ -200,7 +200,7 @@ struct TrendStatCard: View {
     let label: String
     let value: String
     let unit: String
-    
+
     var body: some View {
         VStack(spacing: 4) {
             Text(label)

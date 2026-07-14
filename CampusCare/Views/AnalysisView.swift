@@ -4,19 +4,19 @@ struct AnalysisView: View {
     @State private var analysisResult: AnalysisResult?
     @State private var isRefreshing = false
     @StateObject private var service = AnalysisService.shared
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 if let result = analysisResult {
                     VStack(spacing: 20) {
-                        
+
                         // MARK: - Health Score Ring（动态分数）
                         HealthScoreRing(score: result.score, yesterdayScore: result.yesterdayScore)
-                        
+
                         // MARK: - Dimension Scores（动态各维度评分）
                         DimensionListView(dimensions: result.dimensions)
-                        
+
                         // MARK: - AI Suggestions（动态根据数据生成）
                         SuggestionListView(suggestions: result.suggestions)
                     }
@@ -45,7 +45,7 @@ struct AnalysisView: View {
                                 .foregroundColor(.blue)
                         }
                         .disabled(isRefreshing)
-                        
+
                         NavigationLink(destination: TrendView()) {
                             Image(systemName: "chart.line.uptrend.xyaxis")
                                 .foregroundColor(.blue)
@@ -63,7 +63,7 @@ struct AnalysisView: View {
             refreshAnalysis(delay: 0)
         }
     }
-    
+
     private func refreshAnalysis() {
         refreshAnalysis(delay: 0.5)
     }
@@ -82,14 +82,14 @@ struct AnalysisView: View {
 struct HealthScoreRing: View {
     let score: Int
     let yesterdayScore: Int
-    
+
     var body: some View {
         VStack(spacing: 12) {
             ZStack {
                 Circle()
                     .stroke(Color(.systemGray5), lineWidth: 10)
                     .frame(width: 150, height: 150)
-                
+
                 Circle()
                     .trim(from: 0, to: CGFloat(score) / 100)
                     .stroke(
@@ -99,7 +99,7 @@ struct HealthScoreRing: View {
                     .frame(width: 150, height: 150)
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut(duration: 1.0), value: score)
-                
+
                 VStack(spacing: 2) {
                     Text("\(score)")
                         .font(.system(size: 44, weight: .bold))
@@ -108,7 +108,7 @@ struct HealthScoreRing: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             HStack(spacing: 4) {
                 let change = score - yesterdayScore
                 Image(systemName: change >= 0 ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
@@ -132,16 +132,16 @@ struct HealthScoreRing: View {
 
 struct DimensionListView: View {
     let dimensions: [DimensionScore]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("📊 Dimension Analysis")
                 .font(.headline)
                 .padding(.horizontal, 4)
-            
+
             ForEach(dimensions) { dim in
                 DimensionRow(dimension: dim)
-                
+
                 if dim.id != dimensions.last?.id {
                     Divider()
                         .padding(.horizontal, 4)
@@ -157,7 +157,7 @@ struct DimensionListView: View {
 
 struct DimensionRow: View {
     let dimension: DimensionScore
-    
+
     var body: some View {
         HStack {
             Text(dimension.icon)
@@ -166,9 +166,9 @@ struct DimensionRow: View {
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .frame(width: 60, alignment: .leading)
-            
+
             Spacer()
-            
+
             HStack(spacing: 2) {
                 ForEach(0..<5) { index in
                     Image(systemName: starType(for: dimension.score, index: index))
@@ -176,7 +176,7 @@ struct DimensionRow: View {
                         .font(.caption)
                 }
             }
-            
+
             Text(String(format: "%.1f", dimension.score))
                 .font(.caption)
                 .fontWeight(.semibold)
@@ -186,11 +186,11 @@ struct DimensionRow: View {
         .padding(.vertical, 6)
         .padding(.horizontal, 4)
     }
-    
+
     private func starType(for score: Double, index: Int) -> String {
         let fullStars = Int(score / 2)
         let remainder = score.truncatingRemainder(dividingBy: 2)
-        
+
         if index < fullStars {
             return "star.fill"
         } else if index == fullStars && remainder >= 1 {
@@ -203,12 +203,12 @@ struct DimensionRow: View {
 
 struct SuggestionListView: View {
     let suggestions: [Suggestion]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("💡 AI Suggestions")
                 .font(.headline)
-            
+
             if suggestions.isEmpty {
                 Text("No suggestions yet. Keep up the good work!")
                     .font(.body)
@@ -228,7 +228,7 @@ struct SuggestionListView: View {
 
 struct SuggestionRow: View {
     let suggestion: Suggestion
-    
+
     var priorityColor: Color {
         switch suggestion.priority {
         case .high: return .red
@@ -236,7 +236,7 @@ struct SuggestionRow: View {
         case .low: return .green
         }
     }
-    
+
     var body: some View {
         HStack(spacing: 12) {
             Text(suggestion.icon)

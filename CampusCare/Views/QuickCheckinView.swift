@@ -3,35 +3,35 @@ import SwiftUI
 struct QuickCheckinView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var service = AnalysisService.shared
-    
+
     @State private var selectedMood: Int? = 2
     @State private var waterCount = 5
     @State private var selectedSleep = 2
     @State private var selectedStudy = 2
     @State private var showingCompletion = false
-    
+
     let moods = ["😀", "😄", "😐", "😔", "😭"]
     let moodLabels = ["Great", "Good", "OK", "Tired", "Exhausted"]
     let sleepOptions = ["<6h", "6-7h", "7-8h", "8h+"]
     let studyOptions = ["2h", "4h", "6h", "8h+"]
     static let sleepValues = [5.5, 6.5, 7.5, 8.0]
     static let studyValues = [2.0, 4.0, 6.0, 8.0]
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    
+
                     Text("Complete in 20 seconds")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .padding(.top, 4)
-                    
+
                     // MARK: - Mood Selection
                     VStack(alignment: .leading, spacing: 12) {
                         Text("😊 How do you feel today?")
                             .font(.headline)
-                        
+
                         HStack(spacing: 12) {
                             ForEach(0..<moods.count, id: \.self) { index in
                                 Button(action: {
@@ -70,7 +70,7 @@ struct QuickCheckinView: View {
                     .background(Color(.systemBackground))
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.04), radius: 8)
-                    
+
                     // MARK: - Water Intake
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -102,12 +102,12 @@ struct QuickCheckinView: View {
                     .background(Color(.systemBackground))
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.04), radius: 8)
-                    
+
                     // MARK: - Sleep Selection
                     VStack(alignment: .leading, spacing: 12) {
                         Text("🌙 Sleep (last night)")
                             .font(.headline)
-                        
+
                         HStack(spacing: 6) {
                             ForEach(0..<sleepOptions.count, id: \.self) { index in
                                 Button(action: { selectedSleep = index }) {
@@ -132,12 +132,12 @@ struct QuickCheckinView: View {
                     .background(Color(.systemBackground))
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.04), radius: 8)
-                    
+
                     // MARK: - Study Time
                     VStack(alignment: .leading, spacing: 12) {
                         Text("📚 Study (today)")
                             .font(.headline)
-                        
+
                         HStack(spacing: 6) {
                             ForEach(0..<studyOptions.count, id: \.self) { index in
                                 Button(action: { selectedStudy = index }) {
@@ -162,7 +162,7 @@ struct QuickCheckinView: View {
                     .background(Color(.systemBackground))
                     .cornerRadius(16)
                     .shadow(color: Color.black.opacity(0.04), radius: 8)
-                    
+
                     // MARK: - Complete Button
                     Button(action: {
                         service.updateData(
@@ -171,7 +171,7 @@ struct QuickCheckinView: View {
                             water: waterCount,
                             mood: moodLabels[selectedMood ?? 2]
                         )
-                        
+
                         withAnimation {
                             showingCompletion = true
                         }

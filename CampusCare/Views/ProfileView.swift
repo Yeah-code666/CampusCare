@@ -9,9 +9,9 @@ struct ProfileView: View {
     @AppStorage("healthGoal") private var goal = "Improve Sleep"
     @AppStorage("notificationsEnabled") private var notifications = true
     @AppStorage("darkModeEnabled") private var darkMode = false
-    
+
     let goals = ["Improve Sleep", "Study More", "Exercise More", "Eat Healthier", "Reduce Stress"]
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -33,7 +33,7 @@ struct ProfileView: View {
                     }
                     .padding(.vertical, 4)
                 }
-                
+
                 // 个人信息
                 Section("Personal Info") {
                     HStack {
@@ -61,7 +61,7 @@ struct ProfileView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 // 目标
                 Section("🎯 Health Goal") {
                     Picker("Goal", selection: $goal) {
@@ -71,13 +71,13 @@ struct ProfileView: View {
                     }
                     .pickerStyle(.menu)
                 }
-                
+
                 // 设置
                 Section("⚙️ Settings") {
                     Toggle("🔔 Notifications", isOn: $notifications)
                     Toggle("🌙 Dark Mode", isOn: $darkMode)
                 }
-                
+
                 // 关于
                 Section("ℹ️ About") {
                     HStack {
@@ -93,7 +93,7 @@ struct ProfileView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                
+
                 // 退出
                 Section {
                     Button(role: .destructive) {
